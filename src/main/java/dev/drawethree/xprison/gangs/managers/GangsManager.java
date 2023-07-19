@@ -11,6 +11,7 @@ import dev.drawethree.xprison.gangs.gui.admin.DisbandGangAdminGUI;
 import dev.drawethree.xprison.gangs.model.Gang;
 import dev.drawethree.xprison.gangs.model.GangInvitation;
 import dev.drawethree.xprison.gangs.model.GangTopProvider;
+import dev.drawethree.xprison.utils.NumberFormatter;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import me.lucko.helper.Events;
@@ -37,7 +38,7 @@ public class GangsManager {
 		this.plugin = plugin;
 		this.gangChatEnabledPlayers = new ArrayList<>();
 		this.gangs = new ConcurrentHashMap<>();
-		this.topGangs = new ArrayList<>();
+		this.topGangs = Collections.synchronizedList(new ArrayList<>());
 	}
 
 	public void enable() {
@@ -406,7 +407,10 @@ public class GangsManager {
 				for (int i = 0; i < 10; i++) {
 					try {
 						Gang gang = this.topGangs.get(i);
-						PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%gang%", gang.getName()).replace("%value%", String.format("%,d", gang.getValue())));
+						PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1))
+								.replace("%gang%", gang.getName())
+								.replace("%value%", String.format("%,d", gang.getValue()))
+								.replace("%money%", NumberFormatter.formatNumber(gang.getMoney())));
 					} catch (Exception e) {
 						break;
 					}

@@ -149,7 +149,7 @@ public class Gang {
 	public double getMoney() {
 		double money = 0;
 		for (UUID gangMember : gangMembers) {
-            money += XPrison.getInstance().getEconomy().getBalance(Bukkit.getOfflinePlayer(gangMember););
+            money += XPrison.getInstance().getEconomy().getBalance(Bukkit.getOfflinePlayer(gangMember));
 		}
 
 		return money;
