@@ -14,6 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -148,7 +149,9 @@ public class Gang {
 
 	public double getMoney() {
 		double money = 0;
-		for (UUID gangMember : gangMembers) {
+		final HashSet<UUID> members = new HashSet<>(gangMembers);
+		members.add(gangOwner);
+		for (UUID gangMember : members) {
 			OfflinePlayer offlinePlayer = Bukkit.getPlayer(gangMember);
 
 			if (offlinePlayer == null)
