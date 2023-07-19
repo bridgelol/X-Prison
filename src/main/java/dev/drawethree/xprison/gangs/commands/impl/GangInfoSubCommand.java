@@ -3,6 +3,7 @@ package dev.drawethree.xprison.gangs.commands.impl;
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.commands.GangSubCommand;
 import dev.drawethree.xprison.gangs.model.Gang;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -29,15 +30,20 @@ public final class GangInfoSubCommand extends GangSubCommand {
 		if (sender instanceof Player) {
 			Player p = (Player) sender;
 			if (args.size() == 0) {
-				return this.command.getPlugin().getGangsManager().sendGangInfo(p, p);
+				Schedulers.async().run(() -> {
+					this.command.getPlugin().getGangsManager().sendGangInfo(p, p);
+				});
+				return true;
 			} else if (args.size() == 1) {
+				Schedulers.async().run(() -> {
 				OfflinePlayer target = Players.getOfflineNullable(args.get(0));
-
-				if (this.command.getPlugin().getGangsManager().getPlayerGang(target).isPresent()) {
-					return this.command.getPlugin().getGangsManager().sendGangInfo(p, target);
-				} else {
-					return this.command.getPlugin().getGangsManager().sendGangInfo(p, args.get(0));
-				}
+					if (this.command.getPlugin().getGangsManager().getPlayerGang(target).isPresent()) {
+						this.command.getPlugin().getGangsManager().sendGangInfo(p, target);
+					} else {
+						this.command.getPlugin().getGangsManager().sendGangInfo(p, args.get(0));
+					}
+				});
+				return true;
 			}
 		}
 		return false;

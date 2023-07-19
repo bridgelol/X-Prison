@@ -282,6 +282,7 @@ public class GangsManager {
 			returnList.add(s
 					.replace("%gang_top%", String.format("%,d", this.getGangTopPosition(g)))
 					.replace("%gang_value%", String.format("%,d", g.getValue()))
+					.replace("%gang_money", NumberFormatter.formatNumber(g.getMoney()))
 					.replace("%gang%", TextUtils.applyColor(g.getName()))
 					.replace("%gang_owner%", g.getOwnerOffline().getName())
 					.replace("%gang_members%", StringUtils.join(g.getMembersOffline().stream().map(OfflinePlayer::getName).toArray(), ", ")));
