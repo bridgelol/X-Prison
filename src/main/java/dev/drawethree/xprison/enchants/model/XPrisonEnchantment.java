@@ -31,7 +31,7 @@ public abstract class XPrisonEnchantment implements Refundable {
 	private int guiSlot;
 	private int maxLevel;
 	private long cost;
-	private long increaseCost;
+	private double costIncreaseFactor;
 	private int requiredPickaxeLevel;
 	private boolean messagesEnabled;
 	private boolean refundEnabled;
@@ -56,7 +56,7 @@ public abstract class XPrisonEnchantment implements Refundable {
 		this.guiSlot = this.plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".InGuiSlot");
 		this.maxLevel = this.plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Max");
 		this.cost = this.plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Cost");
-		this.increaseCost = this.plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Increase-Cost-by");
+		this.costIncreaseFactor = Math.max(1, this.plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Increase-Cost-Factor"));
 		this.requiredPickaxeLevel = this.plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Pickaxe-Level-Required");
 		this.messagesEnabled = this.plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Messages-Enabled", true);
 		this.base64 = this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Base64", null);
@@ -80,7 +80,13 @@ public abstract class XPrisonEnchantment implements Refundable {
 	}
 
 	public long getCostOfLevel(int level) {
-		return (this.cost + (this.increaseCost * (level - 1)));
+		double cost = this.cost;
+		for (int i = 0; i < level; i++) {
+			if (i != 0)
+				cost *= this.costIncreaseFactor;
+		}
+
+		return Math.round(cost);
 	}
 
 	public long getRefundForLevel(int level) {
