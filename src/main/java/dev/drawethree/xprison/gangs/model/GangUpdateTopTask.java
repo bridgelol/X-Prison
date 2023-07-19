@@ -3,6 +3,7 @@ package dev.drawethree.xprison.gangs.model;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
+import org.bukkit.Bukkit;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +21,11 @@ public final class GangUpdateTopTask implements Runnable {
 
 	@Override
 	public void run() {
+		if (Bukkit.isPrimaryThread()) {
+			Schedulers.async().run(this);
+			return;
+		}
+
 		this.plugin.getGangsManager().updateGangTop(gangTopProvider);
 	}
 

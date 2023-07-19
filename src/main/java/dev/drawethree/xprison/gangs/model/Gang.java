@@ -1,5 +1,6 @@
 package dev.drawethree.xprison.gangs.model;
 
+import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.gangs.api.events.GangJoinEvent;
 import dev.drawethree.xprison.gangs.api.events.GangLeaveEvent;
 import dev.drawethree.xprison.gangs.enums.GangLeaveReason;
@@ -8,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.lucko.helper.Events;
 import me.lucko.helper.utils.Players;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -142,6 +144,15 @@ public class Gang {
 	public boolean kickPlayer(OfflinePlayer target) {
 		leavePlayer(target, GangLeaveReason.KICK);
 		return true;
+	}
+
+	public double getMoney() {
+		double money = 0;
+		for (UUID gangMember : gangMembers) {
+            money += XPrison.getInstance().getEconomy().getBalance(Bukkit.getOfflinePlayer(gangMember););
+		}
+
+		return money;
 	}
 
 	public List<GangInvitation> getPendingInvites() {

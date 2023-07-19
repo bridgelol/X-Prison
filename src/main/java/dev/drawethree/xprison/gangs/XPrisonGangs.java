@@ -8,6 +8,7 @@ import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.config.GangsConfig;
 import dev.drawethree.xprison.gangs.listener.GangsListener;
 import dev.drawethree.xprison.gangs.managers.GangsManager;
+import dev.drawethree.xprison.gangs.model.GangTopByMoneyProvider;
 import dev.drawethree.xprison.gangs.model.GangTopByValueProvider;
 import dev.drawethree.xprison.gangs.model.GangTopProvider;
 import dev.drawethree.xprison.gangs.model.GangUpdateTopTask;
@@ -81,7 +82,7 @@ public final class XPrisonGangs implements XPrisonModule {
 		this.gangsManager = new GangsManager(this);
 		this.gangsManager.enable();
 
-		this.gangTopProvider = new GangTopByValueProvider(this.gangsManager);
+		this.gangTopProvider = new GangTopByMoneyProvider(this.gangsManager); // new GangTopByValueProvider(this.gangsManager);
 
 		GangsListener gangsListener = new GangsListener(this);
 		gangsListener.register();
