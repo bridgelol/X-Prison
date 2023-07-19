@@ -21,7 +21,7 @@ public class GuiUtils {
             }
             newList.add(s
                     .replace("%refund%", String.format("%,d", enchantment.getRefundForLevel(currentLevel)))
-                    .replace("%cost%", String.format("%,d", enchantment.getCost() + (enchantment.getIncreaseCost() * currentLevel)))
+                    .replace("%cost%", String.format("%,d", enchantment.getCostOfLevel(currentLevel + 1)))
                     .replace("%max_level%", enchantment.getMaxLevel() == Integer.MAX_VALUE ? "Unlimited" : String.format("%,d", enchantment.getMaxLevel()))
                     .replace("%chance%", String.format("%,.2f", enchantment.getChanceToTrigger(currentLevel)))
                     .replace("%current_level%", String.format("%,d", currentLevel))
