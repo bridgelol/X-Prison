@@ -26,7 +26,8 @@ public final class GangInviteSubCommand extends GangSubCommand {
 		if (sender instanceof Player && args.size() == 1) {
 			Player p = (Player) sender;
 			Player target = Players.getNullable(args.get(0));
-			return this.command.getPlugin().getGangsManager().invitePlayer(p, target);
+			this.command.getPlugin().getGangsManager().invitePlayer(p, target);
+			return true;
 		}
 		return false;
 	}

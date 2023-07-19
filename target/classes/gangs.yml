@@ -85,7 +85,7 @@ gang-info-format:
   - "&8» &e%gang% &7Gang"
   - "&8» &7Owner: &e%gang_owner%"
   - "&8» &7Members: &e%gang_members%"
-  - "&8» &7Value: &e%gang_value%"
+  - "&8» &7Money: &e%gang_money%"
   - "&8» &7Top Placement: &e%gang_top%"
   - " "
 gang-top-format:
