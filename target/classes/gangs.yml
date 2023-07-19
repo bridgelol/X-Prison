@@ -91,7 +91,7 @@ gang-info-format:
 gang-top-format:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   - "&e&lGANG TOP"
-  - "{FOR_EACH_GANG} &f&l#%position%. &e%gang% &8» &7%value% Points"
+  - "{FOR_EACH_GANG} &f&l#%position%. &e%gang% &8» &7$%money%"
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
 gang-disband-gui-title: "Disband your gang?"
 # What words should not a gang name contain
