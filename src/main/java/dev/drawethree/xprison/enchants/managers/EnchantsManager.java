@@ -446,7 +446,7 @@ public class EnchantsManager {
 
 	// /givepickaxe <player> <enchant:18=1;...> <name>
 	public void givePickaxe(Player target, Map<XPrisonEnchantment, Integer> enchants, String pickaxeName, CommandSender sender) {
-		ItemStackBuilder pickaxeBuilder = ItemStackBuilder.of(Material.DIAMOND_PICKAXE);
+		ItemStackBuilder pickaxeBuilder = ItemStackBuilder.of(Material.NETHERITE_PICKAXE);
 
 		if (pickaxeName != null) {
 			pickaxeBuilder.name(pickaxeName);
