@@ -65,16 +65,9 @@ public final class NukeEnchant extends XPrisonEnchantment {
         final Player p = e.getPlayer();
         final Block b = e.getBlock();
 
-        IWrappedRegion region = RegionUtils.getRegionWithHighestPriorityAndFlag(b.getLocation(), Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.ALLOW);
-
-        if (region == null) {
-            return;
-        }
-
-        this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
         List<Block> blocksAffected = this.getAffectedBlocks(b);
 
-        NukeTriggerEvent event = this.callNukeTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
+        NukeTriggerEvent event = this.callNukeTriggerEvent(e.getPlayer(), e.getBlock(), blocksAffected);
 
         if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
             this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> NukeTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
@@ -84,7 +77,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
         blocksAffected = event.getBlocksAffected();
 
         if (!this.plugin.getCore().isUltraBackpacksEnabled()) {
-            handleAffectedBlocks(p, region, blocksAffected);
+            handleAffectedBlocks(p, blocksAffected);
         } else {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
@@ -107,7 +100,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
         this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
     }
 
-    private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
+    private void handleAffectedBlocks(Player p, List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
         boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
@@ -121,7 +114,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
             }
 
             if (autoSellPlayerEnabled) {
-                totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
+                totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(block) + 0.0) * amplifier);
             } else {
                 ItemStack itemToGive = CompMaterial.fromBlock(block).toItem(amplifier);
                 p.getInventory().addItem(itemToGive);
@@ -176,8 +169,8 @@ public final class NukeEnchant extends XPrisonEnchantment {
         }
     }
 
-    private NukeTriggerEvent callNukeTriggerEvent(Player p, IWrappedRegion region, Block startBlock, List<Block> affectedBlocks) {
-        NukeTriggerEvent event = new NukeTriggerEvent(p, region, startBlock, affectedBlocks);
+    private NukeTriggerEvent callNukeTriggerEvent(Player p, Block startBlock, List<Block> affectedBlocks) {
+        NukeTriggerEvent event = new NukeTriggerEvent(p, startBlock, affectedBlocks);
         Events.callSync(event);
         this.plugin.getCore().debug("NukeEnchant::callNukeTriggerEvent >> NukeTriggerEvent called.", this.plugin);
         return event;

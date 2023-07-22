@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.List;
 
@@ -19,12 +18,11 @@ public final class ExplosionTriggerEvent extends XPrisonPlayerEnchantTriggerEven
 	 * Called when explosive enchant procs
 	 *
 	 * @param p              Player
-	 * @param mineRegion     WorldGuard region where it was triggered
 	 * @param originBlock    Original block broken that triggered it
 	 * @param blocksAffected List of affected blocks (marked for removal)
 	 */
-	public ExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocksAffected) {
-		super(p, mineRegion, originBlock, blocksAffected);
+	public ExplosionTriggerEvent(Player p, Block originBlock, List<Block> blocksAffected) {
+		super(p, originBlock, blocksAffected);
 	}
 
 	public static HandlerList getHandlerList() {

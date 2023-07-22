@@ -7,12 +7,10 @@ import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.mines.model.mine.Mine;
 import dev.drawethree.xprison.multipliers.enums.MultiplierType;
-import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.block.CuboidExplosionBlockProvider;
 import dev.drawethree.xprison.utils.block.ExplosionBlockProvider;
 import dev.drawethree.xprison.utils.block.SpheroidExplosionBlockProvider;
 import dev.drawethree.xprison.utils.compat.CompMaterial;
-import dev.drawethree.xprison.utils.misc.RegionUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
 import org.bukkit.Material;
@@ -20,8 +18,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.codemc.worldguardwrapper.flag.WrappedState;
-import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -82,20 +78,13 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
         final Player p = e.getPlayer();
         final Block b = e.getBlock();
 
-        IWrappedRegion region = RegionUtils.getRegionWithHighestPriorityAndFlag(b.getLocation(), Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.ALLOW);
-
-        if (region == null) {
-            return;
-        }
-
-        this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
         int radius = this.calculateRadius(enchantLevel);
 
         List<Block> blocksAffected = this.blockProvider.provide(b, radius).stream().filter(block ->
                  plugin.getCore().getMines().getManager().canInteract(block.getLocation()) && block.getType() != Material.AIR)
                 .collect(Collectors.toList());
 
-        ExplosionTriggerEvent event = this.callExplosionTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
+        ExplosionTriggerEvent event = this.callExplosionTriggerEvent(e.getPlayer(), e.getBlock(), blocksAffected);
 
         if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
             this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> ExplosiveTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
@@ -109,7 +98,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
         blocksAffected = event.getBlocksAffected();
 
         if (!this.plugin.getCore().isUltraBackpacksEnabled()) {
-            handleAffectedBlocks(p, region, blocksAffected);
+            handleAffectedBlocks(p, blocksAffected);
         } else {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
@@ -136,7 +125,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
         return chance * enchantLevel;
     }
 
-    private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
+    private void handleAffectedBlocks(Player p, List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
         boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
@@ -150,7 +139,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
             }
 
             if (autoSellPlayerEnabled) {
-                totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
+                totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(block) + 0.0) * amplifier);
             } else {
                 ItemStack itemToGive = CompMaterial.fromBlock(block).toItem(amplifier);
                 p.getInventory().addItem(itemToGive);
@@ -176,8 +165,8 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
         return enchantLevel <= threshold ? 3 : enchantLevel <= threshold * 2 ? 4 : 5;
     }
 
-    private ExplosionTriggerEvent callExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocks) {
-        ExplosionTriggerEvent event = new ExplosionTriggerEvent(p, mineRegion, originBlock, blocks);
+    private ExplosionTriggerEvent callExplosionTriggerEvent(Player p, Block originBlock, List<Block> blocks) {
+        ExplosionTriggerEvent event = new ExplosionTriggerEvent(p, originBlock, blocks);
         Events.callSync(event);
         this.plugin.getCore().debug("ExplosiveEnchant::callExplosiveTriggerEvent >> ExplosiveTriggerEvent called.", this.plugin);
         return event;

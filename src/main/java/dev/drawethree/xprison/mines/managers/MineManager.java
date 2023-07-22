@@ -82,7 +82,7 @@ public class MineManager {
 	}
 
 	public boolean canInteract(Location location) {
-		return this.plugin.getManager().getMineAtLocation(location) == null;
+		return this.plugin.getManager().getMineAtLocation(location) != null;
 	}
 
 	public List<String> getHologramBlocksMinedLines(Mine mine) {

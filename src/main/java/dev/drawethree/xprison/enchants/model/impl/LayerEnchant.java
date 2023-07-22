@@ -67,7 +67,7 @@ public final class LayerEnchant extends XPrisonEnchantment {
         this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
         List<Block> blocksAffected = this.getAffectedBlocks(b);
 
-        LayerTriggerEvent event = this.callLayerTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
+        LayerTriggerEvent event = this.callLayerTriggerEvent(e.getPlayer(), e.getBlock(), blocksAffected);
 
         if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
             this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> LayerTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
@@ -77,7 +77,7 @@ public final class LayerEnchant extends XPrisonEnchantment {
         blocksAffected = event.getBlocksAffected();
 
         if (!this.plugin.getCore().isUltraBackpacksEnabled()) {
-            handleAffectedBlocks(p, region, blocksAffected);
+            handleAffectedBlocks(p, blocksAffected);
         } else {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
@@ -119,7 +119,7 @@ public final class LayerEnchant extends XPrisonEnchantment {
         return blocksAffected;
     }
 
-    private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
+    private void handleAffectedBlocks(Player p, List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
         boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
@@ -132,7 +132,7 @@ public final class LayerEnchant extends XPrisonEnchantment {
             }
 
             if (autoSellPlayerEnabled) {
-                totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
+                totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(block) + 0.0) * amplifier);
             } else {
                 ItemStack itemToGive = CompMaterial.fromBlock(block).toItem(amplifier);
                 p.getInventory().addItem(itemToGive);
@@ -157,8 +157,8 @@ public final class LayerEnchant extends XPrisonEnchantment {
         }
     }
 
-    private LayerTriggerEvent callLayerTriggerEvent(Player player, IWrappedRegion region, Block originBlock, List<Block> blocksAffected) {
-        LayerTriggerEvent event = new LayerTriggerEvent(player, region, originBlock, blocksAffected);
+    private LayerTriggerEvent callLayerTriggerEvent(Player player, Block originBlock, List<Block> blocksAffected) {
+        LayerTriggerEvent event = new LayerTriggerEvent(player, originBlock, blocksAffected);
         Events.callSync(event);
         this.plugin.getCore().debug("LayerEnchant::callLayerTriggerEvent >> LayerTriggerEvent called.", this.plugin);
         return event;

@@ -186,20 +186,15 @@ public class EnchantsManager {
     public void forEachEffectiveEnchant(Player player, ItemStack item, BiConsumer<XPrisonEnchantment, Integer> consumer) {
         for (var entry : this.getItemEnchants(item).entrySet()) {
             final XPrisonEnchantment enchant = entry.getKey();
-            if (enchant.isEnabled() && !player.hasPermission(EXCLUDE_PERMISSION + enchant.getRawName())) {
+            if (enchant.isEnabled() /*&& !player.hasPermission(EXCLUDE_PERMISSION + enchant.getRawName())*/) {
                 consumer.accept(enchant, entry.getValue());
             }
         }
     }
 
 	public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe) {
-
+		System.out.println("HELLO");
 		this.addBlocksBrokenToItem(e.getPlayer(), 1);
-
-		if (RegionUtils.getRegionWithHighestPriorityAndFlag(e.getBlock().getLocation(), Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.ALLOW) == null) {
-			this.plugin.getCore().debug("EnchantsManager::handleBlockBreak >> No region with flag upc-enchants found. Enchants will not be triggered.", this.plugin);
-			return;
-		}
 
         forEachEffectiveEnchant(e.getPlayer(), pickAxe, (enchant, level) -> enchant.onBlockBreak(e, level));
 	}

@@ -13,14 +13,12 @@ import java.util.List;
 public abstract class XPrisonPlayerEnchantTriggerEvent extends XPrisonPlayerEvent implements Cancellable {
 
 	protected final Player player;
-	protected final IWrappedRegion mineRegion;
 	protected final Block originBlock;
 	protected final List<Block> blocksAffected;
 
-	public XPrisonPlayerEnchantTriggerEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocksAffected) {
+	public XPrisonPlayerEnchantTriggerEvent(Player p, Block originBlock, List<Block> blocksAffected) {
 		super(p);
 		this.player = p;
-		this.mineRegion = mineRegion;
 		this.originBlock = originBlock;
 		this.blocksAffected = blocksAffected;
 	}

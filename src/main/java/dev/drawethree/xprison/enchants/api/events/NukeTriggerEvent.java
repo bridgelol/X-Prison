@@ -23,8 +23,8 @@ public final class NukeTriggerEvent extends XPrisonPlayerEnchantTriggerEvent {
 	 * @param originBlock Original block broken that triggered it
 	 * @param blocks      List of affected blocks (marked for removal)
 	 */
-	public NukeTriggerEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocks) {
-		super(p, mineRegion, originBlock, blocks);
+	public NukeTriggerEvent(Player p, Block originBlock, List<Block> blocks) {
+		super(p, originBlock, blocks);
 	}
 
 	public static HandlerList getHandlerList() {
