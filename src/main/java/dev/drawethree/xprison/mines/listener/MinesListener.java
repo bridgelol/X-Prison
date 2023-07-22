@@ -5,9 +5,11 @@ import dev.drawethree.xprison.mines.managers.MineManager;
 import dev.drawethree.xprison.mines.model.mine.Mine;
 import me.lucko.helper.Events;
 import me.lucko.helper.serialize.Position;
+import org.bukkit.GameMode;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Arrays;
@@ -23,15 +25,23 @@ public class MinesListener {
 	public void register() {
 		this.subscribeToBlockBreakEvent();
 		this.subscribeToPlayerInteractEvent();
+
+		Events.subscribe(BlockPlaceEvent.class, EventPriority.HIGHEST)
+				.handler(e -> {
+					if (!e.getPlayer().hasPermission("prison.build") || e.getPlayer().getGameMode() != GameMode.CREATIVE)
+						e.setCancelled(true);
+				});
 	}
 
 	private void subscribeToBlockBreakEvent() {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-				.filter(e -> !e.isCancelled())
 				.handler(e -> {
 					Mine mine = this.plugin.getManager().getMineAtLocation(e.getBlock().getLocation());
 
 					if (mine == null) {
+						if (!e.getPlayer().hasPermission("prison.build") || e.getPlayer().getGameMode() != GameMode.CREATIVE)
+							e.setCancelled(true);
+
 						return;
 					}
 
@@ -39,6 +49,8 @@ public class MinesListener {
 						e.setCancelled(true);
 						return;
 					}
+
+					e.setCancelled(false);
 
 					mine.handleBlockBreak(Arrays.asList(e.getBlock()));
 				}).bindWith(this.plugin.getCore());

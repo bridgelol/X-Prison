@@ -72,7 +72,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
         }
 
         this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
-        List<Block> blocksAffected = this.getAffectedBlocks(b, region);
+        List<Block> blocksAffected = this.getAffectedBlocks(b);
 
         NukeTriggerEvent event = this.callNukeTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
 
@@ -135,20 +135,25 @@ public final class NukeEnchant extends XPrisonEnchantment {
         this.giveEconomyRewardsToPlayer(p, totalDeposit);
     }
 
-    private List<Block> getAffectedBlocks(Block b, IWrappedRegion region) {
+    private List<Block> getAffectedBlocks(Block b) {
+        final Mine mine = plugin.getCore().getMines().getManager().getMineAtLocation(b.getLocation());
+
         List<Block> blocksAffected = new ArrayList<>();
-        ICuboidSelection selection = (ICuboidSelection) region.getSelection();
-        for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
-            for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
-                for (int y = selection.getMinimumPoint().getBlockY(); y <= selection.getMaximumPoint().getBlockY(); y++) {
-                    Block b1 = b.getWorld().getBlockAt(x, y, z);
-                    if (b1.getType() == Material.AIR) {
-                        continue;
+
+        if (mine != null) {
+            for (int x = (int) mine.getMineRegion().getMin().getX(); x <=  (int) mine.getMineRegion().getMax().getX(); x++) {
+                for (int z = (int) mine.getMineRegion().getMin().getZ(); z <= (int) mine.getMineRegion().getMax().getZ(); z++) {
+                    for (int y = (int) mine.getMineRegion().getMin().getY(); y <= (int) mine.getMineRegion().getMax().getY(); y++) {
+                        Block b1 = b.getWorld().getBlockAt(x, y, z);
+                        if (b1.getType() == Material.AIR) {
+                            continue;
+                        }
+                        blocksAffected.add(b1);
                     }
-                    blocksAffected.add(b1);
                 }
             }
         }
+
         return blocksAffected;
     }
 

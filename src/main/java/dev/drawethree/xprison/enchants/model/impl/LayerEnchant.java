@@ -65,7 +65,7 @@ public final class LayerEnchant extends XPrisonEnchantment {
         }
 
         this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
-        List<Block> blocksAffected = this.getAffectedBlocks(b, region);
+        List<Block> blocksAffected = this.getAffectedBlocks(b);
 
         LayerTriggerEvent event = this.callLayerTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
 
@@ -99,18 +99,23 @@ public final class LayerEnchant extends XPrisonEnchantment {
         this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
     }
 
-    private List<Block> getAffectedBlocks(Block startBlock, IWrappedRegion region) {
+    private List<Block> getAffectedBlocks(Block startBlock) {
+        final Mine mine = plugin.getCore().getMines().getManager().getMineAtLocation(startBlock.getLocation());
+
         List<Block> blocksAffected = new ArrayList<>();
-        ICuboidSelection selection = (ICuboidSelection) region.getSelection();
-        for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
-            for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
-                Block b1 = startBlock.getWorld().getBlockAt(x, startBlock.getY(), z);
-                if (b1.getType() == Material.AIR) {
-                    continue;
+
+        if (mine != null) {
+            for (int x = (int) mine.getMineRegion().getMin().getX(); x <=  (int) mine.getMineRegion().getMax().getX(); x++) {
+                for (int z = (int) mine.getMineRegion().getMin().getZ(); z <= (int) mine.getMineRegion().getMax().getZ(); z++) {
+                    Block b1 = startBlock.getWorld().getBlockAt(x, startBlock.getY(), z);
+                    if (b1.getType() == Material.AIR) {
+                        continue;
+                    }
+                    blocksAffected.add(b1);
                 }
-                blocksAffected.add(b1);
             }
         }
+
         return blocksAffected;
     }
 

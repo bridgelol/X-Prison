@@ -91,7 +91,9 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
         this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
         int radius = this.calculateRadius(enchantLevel);
 
-        List<Block> blocksAffected = this.blockProvider.provide(b, radius).stream().filter(block -> region.contains(block.getLocation()) && block.getType() != Material.AIR).collect(Collectors.toList());
+        List<Block> blocksAffected = this.blockProvider.provide(b, radius).stream().filter(block ->
+                 plugin.getCore().getMines().getManager().canInteract(block.getLocation()) && block.getType() != Material.AIR)
+                .collect(Collectors.toList());
 
         ExplosionTriggerEvent event = this.callExplosionTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
 

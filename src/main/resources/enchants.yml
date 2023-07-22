@@ -169,7 +169,7 @@ enchants:
     Name: '&bUnbreaking'
     GuiName: '&bUnbreaking'
     Material: BOOK
-    Enabled: true
+    Enabled: false
     InGuiSlot: 28
     Increase-Cost-Factor: 1.05
     Max: 300

@@ -43,8 +43,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.event.world.TimeSkipEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
@@ -274,6 +278,21 @@ public final class XPrison extends ExtendedJavaPlugin {
         Events.subscribe(PlayerSwapHandItemsEvent.class, EventPriority.HIGHEST).handler(event -> {
             event.setCancelled(true);
             event.getPlayer().chat("/help");
+        }).bindWith(this);
+
+        Events.subscribe(EntityDamageEvent.class, EventPriority.HIGHEST).handler(event -> {
+            if (event.getEntity() instanceof Player)
+                event.setCancelled(true);
+        }).bindWith(this);
+
+        Events.subscribe(WeatherChangeEvent.class, EventPriority.HIGHEST).handler(event -> {
+            event.setCancelled(true);
+        }).bindWith(this);
+
+        Events.subscribe(FoodLevelChangeEvent.class, EventPriority.HIGHEST).handler(event -> {
+           event.setCancelled(true);
+           event.setFoodLevel(20);
+           event.getEntity().setFoodLevel(20);
         }).bindWith(this);
     }
 

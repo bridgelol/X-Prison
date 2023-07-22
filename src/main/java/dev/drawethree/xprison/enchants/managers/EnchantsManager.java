@@ -448,6 +448,9 @@ public class EnchantsManager {
 	public void givePickaxe(Player target, Map<XPrisonEnchantment, Integer> enchants, String pickaxeName, CommandSender sender) {
 		ItemStackBuilder pickaxeBuilder = ItemStackBuilder.of(Material.NETHERITE_PICKAXE);
 
+		pickaxeBuilder.flag(ItemFlag.HIDE_UNBREAKABLE);
+		pickaxeBuilder.transformMeta(meta -> meta.setUnbreakable(true));
+
 		if (pickaxeName != null) {
 			pickaxeBuilder.name(pickaxeName);
 		}

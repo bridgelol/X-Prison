@@ -81,6 +81,9 @@ public class MineManager {
 		return copy;
 	}
 
+	public boolean canInteract(Location location) {
+		return this.plugin.getManager().getMineAtLocation(location) == null;
+	}
 
 	public List<String> getHologramBlocksMinedLines(Mine mine) {
 		List<String> copy = new ArrayList<>();
